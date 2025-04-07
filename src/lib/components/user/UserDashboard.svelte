@@ -102,16 +102,24 @@
       const form = event.formElement;
       const data = new FormData(form);
       const method = editUser ? 'PUT' : 'POST';
+      
       const body = JSON.stringify({
         id: editUser?.id,
-        name: data.get('name'),
-        email: data.get('email'),
-        age: data.get('age')
-        
+        firstname: data.get('firstname') as string,
+        middlename: data.get('middlename') as string | null,
+        lastname: data.get('lastname') as string | null,
+        gender: data.get('gender') as string | null,
+        contactnumber: data.get('contactnumber') as string | null,
+        address: data.get('address') as string | null,
+        job: data.get('job') as string | null,
+        department: data.get('department') as string | null,
+        status: data.get('status') as 'active' | 'inactive',
+        email: data.get('email') as string,
+        age: parseInt(data.get('age') as string) || null
       });
   
       try {
-        const res = await fetch('http://localhost:5173/api/users', {
+        const res = await fetch('/api/users', {
           method,
           headers: { 'Content-Type': 'application/json' },
           body

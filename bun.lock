@@ -6,7 +6,7 @@
       "dependencies": {
         "@libsql/client": "^0.15.2",
         "@types/markdown-it": "^14.1.2",
-        "better-sqlite3": "^11.8.0",
+        "better-sqlite3": "^11.9.1",
         "drizzle-orm": "^0.40.0",
         "markdown-it": "^14.1.0",
         "ndjson-readablestream": "^1.2.0",
