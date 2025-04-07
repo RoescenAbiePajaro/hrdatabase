@@ -56,12 +56,14 @@
 
      <div>
       <label class="block text-gray-700 mb-2">Gender</label>
-      <input
+      <select
         name="gender"
-        type="text"
-        value={editUser?.gender || ''}
         class="w-full px-3 py-2 border rounded"
-      />
+      >
+        <option value="" disabled selected={!editUser?.gender}>Select Gender</option>
+        <option value="Male" selected={editUser?.gender === 'Male'}>Male</option>
+        <option value="Female" selected={editUser?.gender === 'Female'}>Female</option>
+      </select>
     </div>
     <div>
       <label class="block text-gray-700 mb-2">Email</label>
@@ -112,12 +114,13 @@
     </div>
     <div>
       <label class="block text-gray-700 mb-2">Status</label>
-      <input
+      <select
         name="status"
-        type="text"
-        value={editUser?.status || ''}
         class="w-full px-3 py-2 border rounded"
-      />
+      >
+        <option value="active" selected={editUser?.status === 'active'}>Active</option>
+        <option value="inactive" selected={editUser?.status === 'inactive'}>Inactive</option>
+      </select>
     </div>
   </div>
 
@@ -126,8 +129,8 @@
       <input
         name="age"
         type="number"
-        min="13"
-        max="95"
+        min="18"
+        max="35"
         required
         value={editUser?.age || ''}
         class="w-full px-3 py-2 border rounded [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
