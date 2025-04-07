@@ -1,5 +1,4 @@
 import { drizzle } from 'drizzle-orm/bun-sqlite';
-import { Database } from 'bun:sqlite';
 import * as schema from './schema';
 
 const sqlite = new Database('locals.db');
@@ -7,6 +6,7 @@ const db = drizzle(sqlite, { schema });
 
 // Run migrations
 import { migrate } from 'drizzle-orm/bun-sqlite/migrator';
+import Database from 'better-sqlite3';
 
 async function runMigrations() {
   try {
