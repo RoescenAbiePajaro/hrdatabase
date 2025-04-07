@@ -3,7 +3,7 @@
     import { enhance } from '$app/forms';
     import type { SubmitFunction } from '@sveltejs/kit';
 
-    interface User {
+    interface Employee {
       id: number;
       firstname: string;
       middlename: string | null;
@@ -18,18 +18,18 @@
       age: number | null;
     }
 
-    export let editUser: User | null;
+    export let editEmployee: Employee | null;
     export let handleSubmit: SubmitFunction;
 </script>
   
-<form use:enhance={handleSubmit} method="POST" action="/api/users" class="mb-6">
+<form use:enhance={handleSubmit} method="POST" action="/api/employees" class="mb-6">
   <div class="grid grid-cols-1 gap-4 mb-4">
     <div>
       <label class="block text-gray-700 mb-2">First Name</label>
       <input
         name="firstname"
         type="text"
-        value={editUser?.firstname || ''}
+        value={editEmployee?.firstname || ''}
         required
         class="w-full px-3 py-2 border rounded"
       />
@@ -39,7 +39,7 @@
       <input
         name="middlename"
         type="text"
-        value={editUser?.middlename || ''}
+        value={editEmployee?.middlename || ''}
         class="w-full px-3 py-2 border rounded"
       />
     </div>
@@ -48,7 +48,7 @@
       <input
         name="lastname"
         type="text"
-        value={editUser?.lastname || ''}
+        value={editEmployee?.lastname || ''}
         required
         class="w-full px-3 py-2 border rounded"
       />
@@ -60,9 +60,9 @@
         name="gender"
         class="w-full px-3 py-2 border rounded"
       >
-        <option value="" disabled selected={!editUser?.gender}>Select Gender</option>
-        <option value="Male" selected={editUser?.gender === 'Male'}>Male</option>
-        <option value="Female" selected={editUser?.gender === 'Female'}>Female</option>
+        <option value="" disabled selected={!editEmployee?.gender}>Select Gender</option>
+        <option value="Male" selected={editEmployee?.gender === 'Male'}>Male</option>
+        <option value="Female" selected={editEmployee?.gender === 'Female'}>Female</option>
       </select>
     </div>
     <div>
@@ -70,7 +70,7 @@
       <input
         name="email"
         type="email"
-        value={editUser?.email || ''}
+        value={editEmployee?.email || ''}
         required
         class="w-full px-3 py-2 border rounded"
       />
@@ -81,7 +81,7 @@
       <input
         name="contactnumber"
         type="text"
-        value={editUser?.contactnumber || ''}
+        value={editEmployee?.contactnumber || ''}
         class="w-full px-3 py-2 border rounded"
       />
     </div>
@@ -90,7 +90,7 @@
       <input
         name="address"
         type="text"
-        value={editUser?.address || ''}
+        value={editEmployee?.address || ''}
         class="w-full px-3 py-2 border rounded"
       />
     </div>
@@ -99,7 +99,7 @@
       <input
         name="job"
         type="text"
-        value={editUser?.job || ''}
+        value={editEmployee?.job || ''}
         class="w-full px-3 py-2 border rounded"
       />
     </div>
@@ -108,7 +108,7 @@
       <input
         name="department"
         type="text"
-        value={editUser?.department || ''}
+        value={editEmployee?.department || ''}
         class="w-full px-3 py-2 border rounded"
       />
     </div>
@@ -118,8 +118,8 @@
         name="status"
         class="w-full px-3 py-2 border rounded"
       >
-        <option value="active" selected={editUser?.status === 'active'}>Active</option>
-        <option value="inactive" selected={editUser?.status === 'inactive'}>Inactive</option>
+        <option value="active" selected={editEmployee?.status === 'active'}>Active</option>
+        <option value="inactive" selected={editEmployee?.status === 'inactive'}>Inactive</option>
       </select>
     </div>
   </div>
@@ -132,7 +132,7 @@
         min="18"
         max="35"
         required
-        value={editUser?.age || ''}
+        value={editEmployee?.age || ''}
         class="w-full px-3 py-2 border rounded [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
     </div>
@@ -142,12 +142,12 @@
       type="submit"
       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
     >
-      {editUser ? 'Update User' : 'Add User'}
+      {editEmployee ? 'Update Employee' : 'Add Employee'}
     </button>
-    {#if editUser}
+    {#if editEmployee}
       <button
         type="button"
-        on:click={() => editUser = null}
+        on:click={() => editEmployee = null}
         class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
       >
         Cancel

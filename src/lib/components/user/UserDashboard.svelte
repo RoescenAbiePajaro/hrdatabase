@@ -6,7 +6,7 @@
     import UserTable from './UserTable.svelte';
     import AnalysisPanel from './AnalysisPanel.svelte';
     
-    interface User {
+    interface Employee {
       id: number;
       firstname: string;
       middlename: string | null;
@@ -22,7 +22,7 @@
     }
 
     interface Stats {
-      totalUsers: number;
+      totalEmployees: number;
       withAgeData: number;
       averageAge: number | null;
       ageRange: { min: number; max: number } | null;
@@ -30,41 +30,41 @@
 
     }
     
-    let users: User[] = [];
+    let employees: Employee[] = [];
     let loading = false;
     let summary = '';
-    let selectedUserIds: number[] = [];
+    let selectedEmployeeIds: number[] = [];
     let customPrompt = '';
     let stats: Stats | null = null;
     let error = '';
-    let editUser: User | null = null;
+    let editEmployee: Employee | null = null;
     
-    async function fetchUsers() {
+    async function fetchEmployees() {
       loading = true;
       error = '';
       try {
-        const res = await fetch('/api/users');
+        const res = await fetch('/api/employees');
         if (!res.ok) {
           const errorData = await res.json();
-          throw new Error(errorData.error || 'Failed to fetch users');
+          throw new Error(errorData.error || 'Failed to fetch employees');
         }
-        users = await res.json();
+        employees = await res.json();
       } catch (err) {
-        error = err instanceof Error ? err.message : 'Failed to load users';
-        console.error('Error fetching users:', err);
+        error = err instanceof Error ? err.message : 'Failed to load employees';
+        console.error('Error fetching employees:', err);
       } finally {
         loading = false;
       }
     }
     
     onMount(() => {
-      fetchUsers();
+      fetchEmployees();
     });
     
-    function toggleUserSelection(id: number) {
-      selectedUserIds = selectedUserIds.includes(id)
-        ? selectedUserIds.filter(i => i !== id)
-        : [...selectedUserIds, id];
+    function toggleEmployeeSelection(id: number) {
+      selectedEmployeeIds = selectedEmployeeIds.includes(id)
+        ? selectedEmployeeIds.filter(i => i !== id)
+        : [...selectedEmployeeIds, id];
     }
     
     async function generateSummary() {
@@ -72,7 +72,7 @@
       error = '';
       try {
         const requestBody = {
-          userIds: selectedUserIds,
+          employeeIds: selectedEmployeeIds,
           prompt: customPrompt
         };
         console.log('Sending request body:', requestBody);
@@ -101,10 +101,10 @@
     async function handleSubmit(event: { formElement: HTMLFormElement }) {
       const form = event.formElement;
       const data = new FormData(form);
-      const method = editUser ? 'PUT' : 'POST';
+      const method = editEmployee ? 'PUT' : 'POST';
       
       const body = JSON.stringify({
-        id: editUser?.id,
+        id: editEmployee?.id,
         firstname: data.get('firstname') as string,
         middlename: data.get('middlename') as string | null,
         lastname: data.get('lastname') as string | null,
@@ -119,7 +119,7 @@
       });
   
       try {
-        const res = await fetch('/api/users', {
+        const res = await fetch('/api/employees', {
           method,
           headers: { 'Content-Type': 'application/json' },
           body
@@ -127,33 +127,33 @@
   
         if (!res.ok) throw new Error(method === 'POST' ? 'Creation failed' : 'Update failed');
         
-        await fetchUsers();
-        editUser = null;
+        await fetchEmployees();
+        editEmployee = null;
         form.reset();
       } catch (err) {
         error = err instanceof Error ? err.message : 'Operation failed';
       }
     }
     
-    async function deleteUser(id: number) {
-      if (!confirm('Are you sure you want to delete this user?')) return;
+    async function deleteEmployee(id: number) {
+      if (!confirm('Are you sure you want to delete this employee?')) return;
       
       try {
-        const res = await fetch('http://localhost:5173/api/users', {
+        const res = await fetch('http://localhost:5173/api/employees', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id })
         });
   
         if (!res.ok) throw new Error('Deletion failed');
-        await fetchUsers();
+        await fetchEmployees();
       } catch (err) {
         error = err instanceof Error ? err.message : 'Deletion failed';
       }
     }
   
-    function setEditUser(user: User) {
-      editUser = user;
+    function setEditEmployee(employee: Employee) {
+      editEmployee = employee;
     }
   </script>
   
@@ -167,25 +167,25 @@
     {/if}
   
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- User Management Section -->
+      <!-- Employee Management Section -->
       <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-xl font-semibold mb-4 text-gray-700">HR Management System</h2>
         
-        <UserForm {editUser} {handleSubmit} />
+        <UserForm {editEmployee} {handleSubmit} />
         <UserTable 
-          {users} 
+          {employees} 
           {loading} 
-          {selectedUserIds} 
-          {toggleUserSelection}
-          {editUser}
-          setEditUser={setEditUser}
-          {deleteUser}
+          {selectedEmployeeIds} 
+          {toggleEmployeeSelection}
+          {editEmployee}
+          setEditUser={setEditEmployee}
+          {deleteEmployee}
         />
       </div>
   
       <AnalysisPanel
         {loading}
-        {users}
+        {employees}
         {generateSummary}
         {customPrompt}
         {stats}
