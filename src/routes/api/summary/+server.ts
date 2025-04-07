@@ -74,7 +74,7 @@ export const POST: RequestHandler = async ({ request }) => {
     try {
       await ollama.chat({
         model: 'deepseek-r1:1.5b',
-        messages: [{ role: 'user', content: 'test' }]
+        messages: [{ role: 'employee', content: 'test' }]
       });
     } catch (ollamaError) {
       console.error('Ollama connection error:', ollamaError);
@@ -144,7 +144,7 @@ export const POST: RequestHandler = async ({ request }) => {
       model: 'deepseek-r1:1.5b',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: JSON.stringify(employeeData, null, 2) }
+        { role: 'employee', content: JSON.stringify(employeeData, null, 2) }
       ],
       options: { temperature: 0.5 }
     });

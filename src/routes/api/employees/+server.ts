@@ -1,4 +1,4 @@
-// src/routes/api/users/+server.ts
+// src/routes/api/employees/+server.ts
 import { db } from '$lib/server/db';
 import { employee } from '$lib/server/db/schema';
 import { json, error } from '@sveltejs/kit';

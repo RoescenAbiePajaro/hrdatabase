@@ -18,8 +18,73 @@
       age: number | null;
     }
 
+    // Department and role data
+    const departments = [
+      {
+        name: 'Human Resources (HR)',
+        roles: [
+          'HR Generalist',
+          'Recruiter / Talent Acquisition Specialist',
+          'Payroll & Benefits Administrator',
+          'HR Coordinator',
+          'Training & Development Specialist'
+        ]
+      },
+      {
+        name: 'Operations',
+        roles: [
+          'Operations Manager',
+          'Project Manager',
+          'Logistics Coordinator',
+          'Office Manager',
+          'Customer Support Representative'
+        ]
+      },
+      {
+        name: 'Sales & Marketing',
+        roles: [
+          'Sales Representative',
+          'Account Manager',
+          'Marketing Specialist',
+          'Business Development Manager',
+          'Content Creator / Copywriter'
+        ]
+      },
+      {
+        name: 'Finance & Accounting',
+        roles: [
+          'Accountant',
+          'Financial Analyst',
+          'Accounts Payable/Receivable Clerk',
+          'CFO'
+        ]
+      },
+      {
+        name: 'IT / Technical Team',
+        roles: [
+          'Software Developer / Engineer',
+          'IT Support Specialist',
+          'Systems Administrator',
+          'Data Analyst',
+          'Product Manager'
+        ]
+      }
+    ];
+
     export let editEmployee: Employee | null;
     export let handleSubmit: SubmitFunction;
+
+    // Initialize department and job based on existing values
+    let selectedDepartment = editEmployee?.department || '';
+    let selectedJob = editEmployee?.job || '';
+
+    // Update job options when department changes
+    $: availableRoles = departments.find(d => d.name === selectedDepartment)?.roles || [];
+
+    // Update job when department changes
+    $: if (selectedDepartment && !availableRoles.includes(selectedJob)) {
+        selectedJob = availableRoles[0] || '';
+      }
 </script>
   
 <form use:enhance={handleSubmit} method="POST" action="/api/employees" class="mb-6">
@@ -95,22 +160,32 @@
       />
     </div>
     <div>
-      <label class="block text-gray-700 mb-2">Job</label>
-      <input
-        name="job"
-        type="text"
-        value={editEmployee?.job || ''}
+      <label class="block text-gray-700 mb-2">Department</label>
+      <select
+        name="department"
+        bind:value={selectedDepartment}
         class="w-full px-3 py-2 border rounded"
-      />
+        required
+      >
+        <option value="" disabled selected={!selectedDepartment}>Select Department</option>
+        {#each departments as dept}
+          <option value={dept.name} selected={dept.name === selectedDepartment}>{dept.name}</option>
+        {/each}
+      </select>
     </div>
     <div>
-      <label class="block text-gray-700 mb-2">Department</label>
-      <input
-        name="department"
-        type="text"
-        value={editEmployee?.department || ''}
+      <label class="block text-gray-700 mb-2">Job Role</label>
+      <select
+        name="job"
+        bind:value={selectedJob}
         class="w-full px-3 py-2 border rounded"
-      />
+        required
+      >
+        <option value="" disabled selected={!selectedJob}>Select Job Role</option>
+        {#each availableRoles as role}
+          <option value={role} selected={role === selectedJob}>{role}</option>
+        {/each}
+      </select>
     </div>
     <div>
       <label class="block text-gray-700 mb-2">Status</label>
