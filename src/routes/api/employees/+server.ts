@@ -1,6 +1,6 @@
 // src/routes/api/employees/+server.ts
 import { db } from '$lib/server/db';
-import {employeess } from '$lib/server/db/schema';
+import { employeess } from '$lib/server/db/schema';
 import { json, error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';   
 import type { RequestHandler } from './$types';
@@ -8,11 +8,11 @@ import type { RequestHandler } from './$types';
 // interface User {
 interface Employee { 
   id?: number;
-  email: string;
-  age?: number;
   firstname: string;
   middlename: string | null;
   lastname: string | null;
+  email: string;
+  age?: number;
   gender: string | null;
   contactnumber: string | null;
   address: string | null;
@@ -33,7 +33,17 @@ export const GET: RequestHandler = async () => {
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
-    const body = await request.json();
+    // Check if request body is available
+    if (!request.body) {
+      return json({ error: 'No request body provided' }, { status: 400 });
+    }
+
+    // Parse the request body
+    const body = await request.json().catch(() => {
+      return json({ error: 'Invalid JSON format in request body' }, { status: 400 });
+    });
+
+    // Type assertion for the parsed body
     const { firstname, middlename, lastname, gender, contactnumber, address, job, department, status, email, age } = body as Employee;
 
     if (!firstname || !lastname || !email) {
@@ -45,8 +55,7 @@ export const POST: RequestHandler = async ({ request }) => {
     if (!emailRegex.test(email)) {
       return json({ error: 'Invalid email format' }, { status: 400 });
     }
-//employeess will be the table name in schema.ts
-    // const [newUser] = await db.insert(user).values({ user is at schema.ts
+
     const [newEmployee] = await db.insert(employeess).values({
       firstname,
       middlename,
@@ -61,7 +70,6 @@ export const POST: RequestHandler = async ({ request }) => {
       age: age || null,
     }).returning();
 
-    // return json(newUser, { status: 201 });
     return json(newEmployee, { status: 201 });
   } catch (err: any) {
     console.error('Error creating employee:', err);
@@ -85,11 +93,6 @@ export const PUT: RequestHandler = async ({ request }) => {
     throw error(400, 'Invalid email format');
   }
 
-  // try {
-  //   const existingUser = await db.select().from(user).where(eq(user.id, id)).limit(1);
-  //   if (!existingUser.length) {
-  //     throw error(404, 'User not found');
-  //   }
   try {
     const existingEmployee = await db.select().from(employeess).where(eq(employeess.id, id)).limit(1);
     if (!existingEmployee.length) {
@@ -133,15 +136,6 @@ export const DELETE: RequestHandler = async ({ request }) => {
     throw error(400, 'Employee ID is required');
   }
 
-//   try {
-//     await db.delete(user).where(eq(user.id, id));
-//     return json({ success: true });
-//   } catch (err: any) {
-//     console.error('Error deleting employee:', err);
-//     throw error(500, 'Failed to delete employee');
-//   }
-// };
-  
   try {
     await db.delete(employeess).where(eq(employeess.id, id));
     return json({ success: true });
