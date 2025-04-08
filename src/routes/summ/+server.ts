@@ -126,19 +126,14 @@ export const POST: RequestHandler = async ({ request }) => {
 
     // Calculate basic stats
     const ages = employeessData.filter(u => u.age).map(u => u.age!);
-    const inactiveEmployees = employeessData.filter(u => u.status === 'inactive').map(u => ({
-      firstname: u.firstname,
-      middlename: u.middlename,
-      lastname: u.lastname,
-      gender: u.gender,
-      contactnumber: u.contactnumber,
-      address: u.address,
-      job: u.job || 'Unknown',
-      department: u.department || 'Unknown',
-      status: u.status,
-      email: u.email,
-      age: u.age || null
-    }));
+    const inactiveEmployees = employeessData
+      .filter(u => u.status === 'inactive' && u.lastname !== null)
+      .map(u => ({
+        firstname: u.firstname,
+        lastname: u.lastname!,
+        department: u.department || 'Unknown',
+        job: u.job || 'Unknown',
+      }));
 
     const stats = {
       totalEmployees: employeessData.length,
