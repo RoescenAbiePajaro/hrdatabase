@@ -33,10 +33,21 @@
   const itemsPerPage = 5;
 
   // Computed filtered users based on search query
-  $: filteredEmployees = employees.filter(employeess =>
-    (employeess.firstname + ' ' + (employeess.middlename || '') + ' ' + (employeess.lastname || '')).toLowerCase().includes(searchQuery.toLowerCase()) ||
-    employeess.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  $: filteredEmployees = employees.filter(employeess => {
+    const name = [
+      employeess.firstname || '',
+      employeess.middlename || '',
+      employeess.lastname || ''
+    ].join(' ').toLowerCase();
+    
+    return [
+      name,
+      employeess.email || '',
+      employeess.job || '',
+      employeess.department || '',
+      employeess.status || ''
+    ].some(field => field.toLowerCase().includes(searchQuery.toLowerCase()));
+  });
 
   // Computed paginated users
   $: paginatedEmployees = filteredEmployees.slice(
@@ -56,7 +67,9 @@
     <table class="min-w-full bg-white">
       <thead>
         <tr class="border-b">
-          <th class="px-4 py-2 text-left">Name</th>
+          <th class="px-4 py-2 text-left">FirstName</th>
+          <th class="px-4 py-2 text-left">Middle Name</th>
+          <th class="px-4 py-2 text-left">Last Name</th>
           <th class="px-4 py-2 text-left">Email</th>
           <th class="px-4 py-2 text-left">Age</th>
           <th class="px-4 py-2 text-left">Gender</th>
@@ -71,8 +84,10 @@
       <tbody>
         {#each paginatedEmployees as employeess}
           <tr class="border-b hover:bg-gray-50">
-            <td class="px-4 py-2">{employeess.firstname} {employeess.middlename ? employeess.middlename + ' ' : ''}{employeess.lastname}</td>
-            <td class="px-4 py-2">{employeess.email}</td>
+            <td class="px-4 py-2">{employeess.firstname|| '-'}</td>
+            <td class="px-4 py-2">{employeess.middlename || '-'}</td>
+            <td class="px-4 py-2">{employeess.lastname || '-'}</td>
+            <td class="px-4 py-2">{employeess.email || '-'}</td>
             <td class="px-4 py-2">{employeess.age || '-'}</td>
             <td class="px-4 py-2">{employeess.gender || '-'}</td>
             <td class="px-4 py-2">{employeess.contactnumber || '-'}</td>

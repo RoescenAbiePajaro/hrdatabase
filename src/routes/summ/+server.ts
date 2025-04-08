@@ -17,7 +17,7 @@ interface SummaryRequest {
 
 // interface UserData {
 interface EmployeeData {
-  name: string;
+  firstname: string;
   middlename: string | null;
   lastname: string | null;
   gender: string | null;
@@ -39,7 +39,8 @@ interface SummaryResponse {
     ageRange: { min: number; max: number } | null;
     domains: Array<{ domain: string; count: number }>;
     inactiveEmployees: Array<{
-      name: string;
+      firstname: string;
+      lastname: string;
       department: string;
       job: string;
     }>;
@@ -89,7 +90,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
     // Prepare data for analysis
     const employeessData = selectedEmployees.map(employeess=> ({
-      name: employeess.firstname,
+      firstname: employeess.firstname,
       middlename: employeess.middlename,
       lastname: employeess.lastname,
       gender: employeess.gender,
@@ -126,9 +127,17 @@ export const POST: RequestHandler = async ({ request }) => {
     // Calculate basic stats
     const ages = employeessData.filter(u => u.age).map(u => u.age!);
     const inactiveEmployees = employeessData.filter(u => u.status === 'inactive').map(u => ({
-      name: `${u.name} ${u.lastname}`,
+      firstname: u.firstname,
+      middlename: u.middlename,
+      lastname: u.lastname,
+      gender: u.gender,
+      contactnumber: u.contactnumber,
+      address: u.address,
+      job: u.job || 'Unknown',
       department: u.department || 'Unknown',
-      job: u.job || 'Unknown'
+      status: u.status,
+      email: u.email,
+      age: u.age || null
     }));
 
     const stats = {
@@ -142,7 +151,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
     const result: SummaryResponse = {
       summ: response.message?.content || 'No summary generated',
-      stats
+      stats,
     };
 
     return json(result);

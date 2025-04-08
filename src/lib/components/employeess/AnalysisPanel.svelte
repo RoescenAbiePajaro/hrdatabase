@@ -32,7 +32,7 @@
     <div class="mb-6">
       <h3 class="font-semibold mb-2">Quick Stats:</h3>
       <ul class="grid grid-cols-2 gap-2 mb-2">
-        <li class="bg-gray-50 p-2 rounded">Total Employees: {stats.totalUsers}</li>
+        <li class="bg-gray-50 p-2 rounded">Total Employees: {stats.totalEmployees}</li>
         {#if stats.averageAge}
           <li class="bg-gray-50 p-2 rounded">Avg Age: {stats.averageAge.toFixed(1)}</li>
           <li class="bg-gray-50 p-2 rounded">
