@@ -8,7 +8,6 @@ import type { RequestHandler } from './$types';
 // interface User {
 interface Employee { 
   id?: number;
-  name: string;
   email: string;
   age?: number;
   firstname: string;
