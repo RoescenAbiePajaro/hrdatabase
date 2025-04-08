@@ -33,20 +33,20 @@
   const itemsPerPage = 5;
 
   // Computed filtered users based on search query
-  $: filteredEmployees = employees.filter(employeess => {
-    const name = [
-      employeess.firstname || '',
-      employeess.middlename || '',
-      employeess.lastname || ''
-    ].join(' ').toLowerCase();
-    
-    return [
-      name,
-      employeess.email || '',
-      employeess.job || '',
-      employeess.department || '',
-      employeess.status || ''
-    ].some(field => field.toLowerCase().includes(searchQuery.toLowerCase()));
+  $: filteredEmployees = employees.filter(employee => {
+    const searchFields = [
+      employee.firstname,
+      employee.middlename,
+      employee.lastname,
+      employee.email,
+      employee.job,
+      employee.department,
+      employee.status
+    ]
+      .filter(Boolean) // Remove null/undefined values
+      .map(field => (field || '').toLowerCase());
+
+    return searchFields.some(field => field.includes(searchQuery.toLowerCase()));
   });
 
   // Computed paginated users
