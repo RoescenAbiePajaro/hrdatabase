@@ -142,7 +142,7 @@
       type="submit"
       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
     >
-      {editEmployee ? 'Update User' : 'Add User'}
+      {editEmployee ? 'Update Employee' : 'Add Employee'}
     </button>
     {#if editEmployee}
       <button
