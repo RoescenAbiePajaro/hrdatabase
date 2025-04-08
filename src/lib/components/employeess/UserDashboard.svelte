@@ -72,7 +72,7 @@
     error = '';
     try {
       const requestBody = {
-        employeeIds: selectedEmployeeIds,
+        employeessIds: selectedEmployeeIds,
         prompt: customPrompt
       };
       console.log('Sending request body:', requestBody);

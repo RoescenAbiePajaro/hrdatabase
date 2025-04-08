@@ -32,6 +32,13 @@
   let currentPage = 1;
   const itemsPerPage = 5;
 
+  // Ensure selectedEmployeeIds is always an array
+  $: {
+    if (!Array.isArray(selectedEmployeeIds)) {
+      selectedEmployeeIds = [];
+    }
+  }
+
   // Computed filtered users based on search query
   $: filteredEmployees = employees.filter(employee => {
     const searchFields = [
