@@ -1,6 +1,6 @@
 <!-- src/lib/components/user/UserTable.svelte -->
 <script lang="ts">
-  interface User {
+  interface Employee {
     id: number;
     firstname: string;
     middlename: string | null;
@@ -17,13 +17,13 @@
 
 
 
-  export let users: User[] = [];
+  export let employees: Employee[] = [];
   export let loading: boolean = false;
-  export let selectedUserIds: number[] = [];
-  export let editUser: User | null = null;
-  export let setEditUser: (user: User) => void;
-  export let deleteUser: (id: number) => void;
-  export let toggleUserSelection: (id: number) => void; // Added prop
+  export let selectedEmployeeIds: number[] = [];
+  export let editEmployee: Employee | null = null;
+  export let setEditEmployee: (employeess: Employee) => void;
+  export let deleteEmployee: (id: number) => void;
+  export let toggleEmployeeSelection: (id: number) => void; // Added prop
 
 
 
@@ -33,25 +33,25 @@
   const itemsPerPage = 5;
 
   // Computed filtered users based on search query
-  $: filteredUsers = users.filter(user =>
-    (user.firstname + ' ' + (user.middlename || '') + ' ' + (user.lastname || '')).toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  $: filteredEmployees = employees.filter(employeess =>
+    (employeess.firstname + ' ' + (employeess.middlename || '') + ' ' + (employeess.lastname || '')).toLowerCase().includes(searchQuery.toLowerCase()) ||
+    employeess.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Computed paginated users
-  $: paginatedUsers = filteredUsers.slice(
+  $: paginatedEmployees = filteredEmployees.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
   // Calculate total pages
-  $: totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  $: totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 </script>
 
 <div class="overflow-x-auto">
   <input type="text" placeholder="Search..." bind:value={searchQuery} class="mb-4 p-2 border rounded" />
-  {#if loading && users.length === 0}
-    <p class="text-center py-4">Loading users...</p>
+  {#if loading && employees.length === 0}
+    <p class="text-center py-4">Loading employees...</p>
   {:else}
     <table class="min-w-full bg-white">
       <thead>
@@ -69,26 +69,26 @@
         </tr>
       </thead>
       <tbody>
-        {#each paginatedUsers as user}
+        {#each paginatedEmployees as employeess}
           <tr class="border-b hover:bg-gray-50">
-            <td class="px-4 py-2">{user.firstname} {user.middlename ? user.middlename + ' ' : ''}{user.lastname}</td>
-            <td class="px-4 py-2">{user.email}</td>
-            <td class="px-4 py-2">{user.age || '-'}</td>
-            <td class="px-4 py-2">{user.gender || '-'}</td>
-            <td class="px-4 py-2">{user.contactnumber || '-'}</td>
-            <td class="px-4 py-2">{user.address || '-'}</td>
-            <td class="px-4 py-2">{user.job || '-'}</td>
-            <td class="px-4 py-2">{user.department || '-'}</td>
-            <td class="px-4 py-2">{user.status}</td>
+            <td class="px-4 py-2">{employeess.firstname} {employeess.middlename ? employeess.middlename + ' ' : ''}{employeess.lastname}</td>
+            <td class="px-4 py-2">{employeess.email}</td>
+            <td class="px-4 py-2">{employeess.age || '-'}</td>
+            <td class="px-4 py-2">{employeess.gender || '-'}</td>
+            <td class="px-4 py-2">{employeess.contactnumber || '-'}</td>
+            <td class="px-4 py-2">{employeess.address || '-'}</td>
+            <td class="px-4 py-2">{employeess.job || '-'}</td>
+            <td class="px-4 py-2">{employeess.department || '-'}</td>
+            <td class="px-4 py-2">{employeess.status}</td>
             <td class="px-4 py-2 flex gap-2">
               <button
-                on:click={() => setEditUser(user)}
+                on:click={() => setEditEmployee(employeess)}
                 class="text-blue-600 hover:text-blue-800"
               >
                 Edit
               </button>
               <button
-                on:click={() => deleteUser(user.id)}
+                on:click={() => deleteEmployee(employeess.id)}
                 class="text-red-600 hover:text-red-800"
               >
                 Delete

@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
     import { goto } from '$app/navigation';
     
     const menuItems = [
@@ -87,4 +87,4 @@
     .label {
         font-size: 0.9rem;
     }
-</style>
+</style> -->
