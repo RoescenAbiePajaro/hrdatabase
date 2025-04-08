@@ -2,15 +2,15 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { Ollama } from 'ollama';
 import { db } from '$lib/server/db';
-import { employee } from '$lib/server/db/schema';
+import { user } from '$lib/server/db/schema';
 import { inArray } from 'drizzle-orm';
 
 interface SummaryRequest {
-  employeeIds: number[];
+  userIds: number[];
   prompt?: string;
 }
 
-interface EmployeeData {
+interface UserData {
   name: string;
   middlename: string | null;
   lastname: string | null;
@@ -27,12 +27,12 @@ interface EmployeeData {
 interface SummaryResponse {
   summary: string;
   stats: {
-    totalEmployees: number;
+    totalUsers: number;
     withAgeData: number;
     averageAge: number | null;
     ageRange: { min: number; max: number } | null;
     domains: Array<{ domain: string; count: number }>;
-    inactiveEmployees: Array<{
+    inactiveUsers: Array<{
       name: string;
       department: string;
       job: string;
@@ -55,26 +55,26 @@ export const POST: RequestHandler = async ({ request }) => {
       return json({ error: 'Invalid JSON format', details: String(parseError) }, { status: 400 });
     }
 
-    const { employeeIds, prompt } = body as SummaryRequest;
+    const { userIds, prompt } = body as SummaryRequest;
 
-    if (!Array.isArray(employeeIds)) {
-      return json({ error: 'employeeIds must be an array' }, { status: 400 });
+    if (!Array.isArray(userIds)) {
+      return json({ error: 'userIds must be an array' }, { status: 400 });
     }
 
-    // Fetch selected employees from database
-    const selectedEmployees = employeeIds.length > 0
-      ? await db.select().from(employee).where(inArray(employee.id, employeeIds))
-      : await db.select().from(employee);
+    // Fetch selected users from database
+    const selectedUsers = userIds.length > 0
+      ? await db.select().from(user).where(inArray(user.id, userIds))
+      : await db.select().from(user);
 
-    if (selectedEmployees.length === 0) {
-      return json({ error: 'No employees found' }, { status: 400 });
+    if (selectedUsers.length === 0) {
+      return json({ error: 'No users found' }, { status: 400 });
     }
 
     // Check if Ollama is running
     try {
       await ollama.chat({
         model: 'deepseek-r1:1.5b',
-        messages: [{ role: 'employee', content: 'test' }]
+        messages: [{ role: 'user', content: 'test' }]
       });
     } catch (ollamaError) {
       console.error('Ollama connection error:', ollamaError);
@@ -82,61 +82,29 @@ export const POST: RequestHandler = async ({ request }) => {
     }
 
     // Prepare data for analysis
-    const employeeData = selectedEmployees.map(employee => ({
-      name: employee.firstname,
-      middlename: employee.middlename,
-      lastname: employee.lastname,
-      gender: employee.gender,
-      contactnumber: employee.contactnumber,
-      address: employee.address,
-      job: employee.job,
-      department: employee.department,
-      status: employee.status,
-      age: employee.age,
-      email: employee.email,
-    })) as EmployeeData[];
+    const userData = selectedUsers.map(user => ({
+      name: user.firstname,
+      middlename: user.middlename,
+      lastname: user.lastname,
+      gender: user.gender,
+      contactnumber: user.contactnumber,
+      address: user.address,
+      job: user.job,
+      department: user.department,
+      status: user.status,
+      age: user.age,
+      email: user.email,
+    })) as UserData[];
 
     // Generate system prompt
     const systemPrompt = `
-      You are a data analyst assistant. Analyze the following employee data and provide:
-
-      1. Key Statistics:
-      - Total number of employees
-      - Number of active vs inactive employees
-      - Age distribution (minimum, maximum, average)
-      - Department-wise distribution
-      - Job role distribution
-
-      2. Patterns and Observations:
-      - Age distribution across different departments
-      - Common job roles within departments
-      - Gender distribution by department
-      - Email domain patterns (company vs personal)
-
-      3. ${prompt ? 'Specific insights based on: ' + prompt : 'General insights about the employee base'}
-
-      4. Inactive Employee Analysis:
-      - For each inactive employee:
-        * Current age
-        * Department and job role
-        * Time since inactivity
-        * Recommendations:
-          - Keep in current role with modifications
-          - Transfer to different department
-          - Terminate employment
-          - Other specific recommendations
-
-      Format your response in clear, concise markdown with these sections:
-      1. Key Statistics (with bullet points and numbers)
-      2. Patterns and Observations (with bullet points)
-      3. Specific/General Insights
-      4. Inactive Employee Analysis (with individual employee sections)
-
-      For inactive employees, provide specific recommendations based on:
-      - Age and experience level
-      - Current department needs
-      - Job role relevance
-      - Company policies
+      You are a data analyst assistant. Analyze the following user data and provide:
+      1. Key statistics (average age, age distribution, etc.)
+      2. Interesting patterns or observations
+      3. ${prompt ? 'Specific insights based on: ' + prompt : 'General insights about the user base'}
+      4. For any inactive users, provide specific recommendations about whether they should be removed from their department or job role. Consider their age, job, and department when making these suggestions.
+      
+      Respond in clear, concise markdown format with bullet points. For inactive user recommendations, use a separate section titled '### Inactive User Recommendations'.
     `;
 
     // Get AI summary
@@ -144,26 +112,26 @@ export const POST: RequestHandler = async ({ request }) => {
       model: 'deepseek-r1:1.5b',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'employee', content: JSON.stringify(employeeData, null, 2) }
+        { role: 'user', content: JSON.stringify(userData, null, 2) }
       ],
       options: { temperature: 0.5 }
     });
 
     // Calculate basic stats
-    const ages = employeeData.filter(u => u.age).map(u => u.age!);
-    const inactiveEmployees = employeeData.filter(u => u.status === 'inactive').map(u => ({
+    const ages = userData.filter(u => u.age).map(u => u.age!);
+    const inactiveUsers = userData.filter(u => u.status === 'inactive').map(u => ({
       name: `${u.name} ${u.lastname}`,
       department: u.department || 'Unknown',
       job: u.job || 'Unknown'
     }));
 
     const stats = {
-      totalEmployees: employeeData.length,
+      totalUsers: userData.length,
       withAgeData: ages.length,
       averageAge: ages.length ? (ages.reduce((a, b) => a + b, 0) / ages.length) : null,
       ageRange: ages.length ? { min: Math.min(...ages), max: Math.max(...ages) } : null,
-      domains: countEmailDomains(employeeData),
-      inactiveEmployees
+      domains: countEmailDomains(userData),
+      inactiveUsers
     };
 
     const result: SummaryResponse = {
@@ -182,10 +150,10 @@ export const POST: RequestHandler = async ({ request }) => {
   }
 };
 
-function countEmailDomains(employees: EmployeeData[]): Array<{ domain: string; count: number }> {
+function countEmailDomains(users: UserData[]): Array<{ domain: string; count: number }> {
   const domains: Record<string, number> = {};
-  employees.forEach(employee => {
-    const domain = employee.email.split('@')[1];
+  users.forEach(user => {
+    const domain = user.email.split('@')[1];
     if (domain) domains[domain] = (domains[domain] || 0) + 1;
   });
   return Object.entries(domains).map(([domain, count]) => ({ domain, count }));

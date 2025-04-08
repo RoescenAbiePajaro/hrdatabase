@@ -1,11 +1,11 @@
-// src/routes/api/employees/+server.ts
+// src/routes/api/user/+server.ts
 import { db } from '$lib/server/db';
-import { employee } from '$lib/server/db/schema';
+import { user } from '$lib/server/db/schema';
 import { json, error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';   
 import type { RequestHandler } from './$types';
 
-interface Employee {
+interface User {
   id?: number;
   name: string;
   email: string;
@@ -23,10 +23,10 @@ interface Employee {
 
 export const GET: RequestHandler = async () => {
   try {
-    const results = await db.select().from(employee);
+    const results = await db.select().from(user);
     return json(results);
   } catch (err) {
-    console.error('Error fetching employees:', err);
+    console.error('Error fetching employee:', err);
     return json({ error: 'Failed to fetch employees', details: String(err) }, { status: 500 });
   }
 };
@@ -34,7 +34,7 @@ export const GET: RequestHandler = async () => {
 export const POST: RequestHandler = async ({ request }) => {
   try {
     const body = await request.json();
-    const { firstname, middlename, lastname, gender, contactnumber, address, job, department, status, email, age } = body as Employee;
+    const { firstname, middlename, lastname, gender, contactnumber, address, job, department, status, email, age } = body as User;
 
     if (!firstname || !lastname || !email) {
       return json({ error: 'First name, last name, and email are required' }, { status: 400 });
@@ -46,7 +46,7 @@ export const POST: RequestHandler = async ({ request }) => {
       return json({ error: 'Invalid email format' }, { status: 400 });
     }
 
-    const [newEmployee] = await db.insert(employee).values({
+    const [newUser] = await db.insert(user).values({
       firstname,
       middlename,
       lastname,
@@ -60,7 +60,7 @@ export const POST: RequestHandler = async ({ request }) => {
       age: age || null,
     }).returning();
 
-    return json(newEmployee, { status: 201 });
+    return json(newUser, { status: 201 });
   } catch (err: any) {
     console.error('Error creating employee:', err);
     if (err.message?.includes('UNIQUE constraint failed')) {
@@ -71,7 +71,7 @@ export const POST: RequestHandler = async ({ request }) => {
 };
 
 export const PUT: RequestHandler = async ({ request }) => {
-  const { id, firstname, middlename, lastname, gender, contactnumber, address, job, department, status, email, age } = await request.json() as Employee;
+  const { id, firstname, middlename, lastname, gender, contactnumber, address, job, department, status, email, age } = await request.json() as User;
 
   if (!id || !firstname || !lastname || !email) {
     throw error(400, 'ID, first name, last name, and email are required');
@@ -84,13 +84,13 @@ export const PUT: RequestHandler = async ({ request }) => {
   }
 
   try {
-    // First check if employee exists
-    const existingEmployee = await db.select().from(employee).where(eq(employee.id, id)).limit(1);
-    if (!existingEmployee.length) {
-      throw error(404, 'Employee not found');
+    // First check if user exists
+    const existingUser = await db.select().from(user).where(eq(user.id, id)).limit(1);
+    if (!existingUser.length) {
+      throw error(404, 'User not found');
     }
 
-    const [updatedEmployee] = await db.update(employee)
+    const [updatedUser] = await db.update(user)
       .set({ 
         firstname,
         middlename,
@@ -104,10 +104,10 @@ export const PUT: RequestHandler = async ({ request }) => {
         email,
         age: age || null 
       })
-      .where(eq(employee.id, id))
+      .where(eq(user.id, id))
       .returning();
 
-    return json(updatedEmployee);
+    return json(updatedUser);
   } catch (err: any) {
     console.error('Error updating employee:', err);
     if (err.message?.includes('UNIQUE constraint failed')) {
@@ -128,7 +128,7 @@ export const DELETE: RequestHandler = async ({ request }) => {
   }
 
   try {
-    await db.delete(employee).where(eq(employee.id, id));
+    await db.delete(user).where(eq(user.id, id));
     return json({ success: true });
   } catch (err: any) {
     console.error('Error deleting employee:', err);

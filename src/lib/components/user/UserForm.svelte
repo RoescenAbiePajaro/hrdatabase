@@ -3,7 +3,7 @@
     import { enhance } from '$app/forms';
     import type { SubmitFunction } from '@sveltejs/kit';
 
-    interface Employee {
+    interface User {
       id: number;
       firstname: string;
       middlename: string | null;
@@ -18,83 +18,18 @@
       age: number | null;
     }
 
-    // Department and role data
-    const departments = [
-      {
-        name: 'Human Resources (HR)',
-        roles: [
-          'HR Generalist',
-          'Recruiter / Talent Acquisition Specialist',
-          'Payroll & Benefits Administrator',
-          'HR Coordinator',
-          'Training & Development Specialist'
-        ]
-      },
-      {
-        name: 'Operations',
-        roles: [
-          'Operations Manager',
-          'Project Manager',
-          'Logistics Coordinator',
-          'Office Manager',
-          'Customer Support Representative'
-        ]
-      },
-      {
-        name: 'Sales & Marketing',
-        roles: [
-          'Sales Representative',
-          'Account Manager',
-          'Marketing Specialist',
-          'Business Development Manager',
-          'Content Creator / Copywriter'
-        ]
-      },
-      {
-        name: 'Finance & Accounting',
-        roles: [
-          'Accountant',
-          'Financial Analyst',
-          'Accounts Payable/Receivable Clerk',
-          'CFO'
-        ]
-      },
-      {
-        name: 'IT / Technical Team',
-        roles: [
-          'Software Developer / Engineer',
-          'IT Support Specialist',
-          'Systems Administrator',
-          'Data Analyst',
-          'Product Manager'
-        ]
-      }
-    ];
-
-    export let editEmployee: Employee | null;
+    export let editUser: User | null;
     export let handleSubmit: SubmitFunction;
-
-    // Initialize department and job based on existing values
-    let selectedDepartment = editEmployee?.department || '';
-    let selectedJob = editEmployee?.job || '';
-
-    // Update job options when department changes
-    $: availableRoles = departments.find(d => d.name === selectedDepartment)?.roles || [];
-
-    // Update job when department changes
-    $: if (selectedDepartment && !availableRoles.includes(selectedJob)) {
-        selectedJob = availableRoles[0] || '';
-      }
 </script>
   
-<form use:enhance={handleSubmit} method="POST" action="/api/employees" class="mb-6">
+<form use:enhance={handleSubmit} method="POST" action="/api/users" class="mb-6">
   <div class="grid grid-cols-1 gap-4 mb-4">
     <div>
       <label class="block text-gray-700 mb-2">First Name</label>
       <input
         name="firstname"
         type="text"
-        value={editEmployee?.firstname || ''}
+        value={editUser?.firstname || ''}
         required
         class="w-full px-3 py-2 border rounded"
       />
@@ -104,7 +39,7 @@
       <input
         name="middlename"
         type="text"
-        value={editEmployee?.middlename || ''}
+        value={editUser?.middlename || ''}
         class="w-full px-3 py-2 border rounded"
       />
     </div>
@@ -113,7 +48,7 @@
       <input
         name="lastname"
         type="text"
-        value={editEmployee?.lastname || ''}
+        value={editUser?.lastname || ''}
         required
         class="w-full px-3 py-2 border rounded"
       />
@@ -125,9 +60,9 @@
         name="gender"
         class="w-full px-3 py-2 border rounded"
       >
-        <option value="" disabled selected={!editEmployee?.gender}>Select Gender</option>
-        <option value="Male" selected={editEmployee?.gender === 'Male'}>Male</option>
-        <option value="Female" selected={editEmployee?.gender === 'Female'}>Female</option>
+        <option value="" disabled selected={!editUser?.gender}>Select Gender</option>
+        <option value="Male" selected={editUser?.gender === 'Male'}>Male</option>
+        <option value="Female" selected={editUser?.gender === 'Female'}>Female</option>
       </select>
     </div>
     <div>
@@ -135,7 +70,7 @@
       <input
         name="email"
         type="email"
-        value={editEmployee?.email || ''}
+        value={editUser?.email || ''}
         required
         class="w-full px-3 py-2 border rounded"
       />
@@ -146,7 +81,7 @@
       <input
         name="contactnumber"
         type="text"
-        value={editEmployee?.contactnumber || ''}
+        value={editUser?.contactnumber || ''}
         class="w-full px-3 py-2 border rounded"
       />
     </div>
@@ -155,37 +90,27 @@
       <input
         name="address"
         type="text"
-        value={editEmployee?.address || ''}
+        value={editUser?.address || ''}
+        class="w-full px-3 py-2 border rounded"
+      />
+    </div>
+    <div>
+      <label class="block text-gray-700 mb-2">Job</label>
+      <input
+        name="job"
+        type="text"
+        value={editUser?.job || ''}
         class="w-full px-3 py-2 border rounded"
       />
     </div>
     <div>
       <label class="block text-gray-700 mb-2">Department</label>
-      <select
+      <input
         name="department"
-        bind:value={selectedDepartment}
+        type="text"
+        value={editUser?.department || ''}
         class="w-full px-3 py-2 border rounded"
-        required
-      >
-        <option value="" disabled selected={!selectedDepartment}>Select Department</option>
-        {#each departments as dept}
-          <option value={dept.name} selected={dept.name === selectedDepartment}>{dept.name}</option>
-        {/each}
-      </select>
-    </div>
-    <div>
-      <label class="block text-gray-700 mb-2">Job Role</label>
-      <select
-        name="job"
-        bind:value={selectedJob}
-        class="w-full px-3 py-2 border rounded"
-        required
-      >
-        <option value="" disabled selected={!selectedJob}>Select Job Role</option>
-        {#each availableRoles as role}
-          <option value={role} selected={role === selectedJob}>{role}</option>
-        {/each}
-      </select>
+      />
     </div>
     <div>
       <label class="block text-gray-700 mb-2">Status</label>
@@ -193,8 +118,8 @@
         name="status"
         class="w-full px-3 py-2 border rounded"
       >
-        <option value="active" selected={editEmployee?.status === 'active'}>Active</option>
-        <option value="inactive" selected={editEmployee?.status === 'inactive'}>Inactive</option>
+        <option value="active" selected={editUser?.status === 'active'}>Active</option>
+        <option value="inactive" selected={editUser?.status === 'inactive'}>Inactive</option>
       </select>
     </div>
   </div>
@@ -207,7 +132,7 @@
         min="18"
         max="35"
         required
-        value={editEmployee?.age || ''}
+        value={editUser?.age || ''}
         class="w-full px-3 py-2 border rounded [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
     </div>
@@ -217,12 +142,12 @@
       type="submit"
       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
     >
-      {editEmployee ? 'Update Employee' : 'Add Employee'}
+      {editUser ? 'Update User' : 'Add User'}
     </button>
-    {#if editEmployee}
+    {#if editUser}
       <button
         type="button"
-        on:click={() => editEmployee = null}
+        on:click={() => editUser = null}
         class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
       >
         Cancel

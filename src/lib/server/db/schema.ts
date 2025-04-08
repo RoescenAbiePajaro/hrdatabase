@@ -1,7 +1,7 @@
 // src/lib/server/db/schema.ts
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
-export const employee = sqliteTable('employee', {
+export const employee = sqliteTable('user', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   firstname: text('firstname').notNull(),
   middlename: text('middlename'),
