@@ -30,14 +30,14 @@
 
   }
   
-  let users: Employee[] = [];
+  let employees: Employee[] = [];
   let loading = false;
   let summ = '';
   let selectedEmployeeIds: number[] = [];
   let customPrompt = '';
   let stats: Stats | null = null;
   let error = '';
-  let editUser: Employee | null = null;
+  let editEmployee: Employee | null = null;
   
   async function fetchEmployees() {
     loading = true;
@@ -48,7 +48,7 @@
         const errorData = await res.json();
         throw new Error(errorData.error || 'Failed to fetch employees');
       }
-      employeess = await res.json();
+      employees = await res.json();
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to load employees';
       console.error('Error fetching employees:', err);
@@ -72,7 +72,7 @@
     error = '';
     try {
       const requestBody = {
-        employeessIds: selectedEmployeeIds,
+        employeeIds: selectedEmployeeIds,
         prompt: customPrompt
       };
       console.log('Sending request body:', requestBody);
@@ -128,7 +128,7 @@
       if (!res.ok) throw new Error(method === 'POST' ? 'Creation failed' : 'Update failed');
       
       await fetchEmployees();
-      editEmployees = null;
+      editEmployee = null;
       form.reset();
     } catch (err) {
       error = err instanceof Error ? err.message : 'Operation failed';
@@ -171,9 +171,9 @@
     <div class="bg-white rounded-lg shadow p-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-700">HR Management System</h2>
       
-      <UserForm {editUser} {handleSubmit} />
+      <UserForm {editEmployee} {handleSubmit} />
       <UserTable 
-        {users} 
+        {employees} 
         {loading} 
         {selectedEmployeeIds} 
         {toggleEmployeeSelection}

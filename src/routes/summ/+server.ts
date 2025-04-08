@@ -1,4 +1,4 @@
-// src/routes/api/summary/+server.ts
+// src/routes/api/summ/+server.ts
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { Ollama } from 'ollama';
 import { db } from '$lib/server/db';
@@ -156,7 +156,7 @@ export const POST: RequestHandler = async ({ request }) => {
   }
 };
 
-function countEmailDomains(employees: employeessData[]): Array<{ domain: string; count: number }> {
+function countEmailDomains(employees: EmployeeData[]): Array<{ domain: string; count: number }> {
   const domains: Record<string, number> = {};
   employees.forEach(employeess => {
     const domain = employeess.email.split('@')[1];
