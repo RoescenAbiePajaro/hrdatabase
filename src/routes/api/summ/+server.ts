@@ -111,7 +111,7 @@ export const POST: RequestHandler = async ({ request }) => {
       3. ${prompt ? 'Specific insights based on: ' + prompt : 'General insights about the user base'}
       4. For any inactive users, provide specific recommendations about whether they should be removed from their department or job role. Consider their age, job, and department when making these suggestions.
       
-      Respond in clear, concise markdown format with bullet points. For inactive user recommendations, use a separate section titled '### Inactive User Recommendations'.
+      Respond in clear, concise markdown format with bullet points. For inactive user recommendations as a list, use a separate section titled '### Inactive User Recommendations'.
     `;
 
     // Get AI summary

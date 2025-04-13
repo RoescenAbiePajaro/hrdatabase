@@ -2,6 +2,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
     import type { SubmitFunction } from '@sveltejs/kit';
+    import { departments } from '$lib/stores/departmentStore';
 
     interface Employee {
       id: number;
@@ -20,6 +21,11 @@
 
     export let editEmployee: Employee | null;
     export let handleSubmit: SubmitFunction;
+
+    let selectedDepartment = editEmployee?.department || '';
+    let selectedJob = editEmployee?.job || '';
+
+    $: availableJobs = $departments.find(d => d.name === selectedDepartment)?.jobs || [];
 </script>
   
 <form use:enhance={handleSubmit} method="POST" action="/api/employees" class="mb-6">
@@ -95,22 +101,30 @@
       />
     </div>
     <div>
-      <label class="block text-gray-700 mb-2">Job</label>
-      <input
-        name="job"
-        type="text"
-        value={editEmployee?.job || ''}
+      <label class="block text-gray-700 mb-2">Department</label>
+      <select
+        name="department"
+        bind:value={selectedDepartment}
         class="w-full px-3 py-2 border rounded"
-      />
+      >
+        <option value="" disabled selected={!selectedDepartment}>Select Department</option>
+        {#each $departments as dept}
+          <option value={dept.name} selected={dept.name === selectedDepartment}>{dept.name}</option>
+        {/each}
+      </select>
     </div>
     <div>
-      <label class="block text-gray-700 mb-2">Department</label>
-      <input
-        name="department"
-        type="text"
-        value={editEmployee?.department || ''}
+      <label class="block text-gray-700 mb-2">Job</label>
+      <select
+        name="job"
+        bind:value={selectedJob}
         class="w-full px-3 py-2 border rounded"
-      />
+      >
+        <option value="" disabled selected={!selectedJob}>Select Job</option>
+        {#each availableJobs as job}
+          <option value={job} selected={job === selectedJob}>{job}</option>
+        {/each}
+      </select>
     </div>
     <div>
       <label class="block text-gray-700 mb-2">Status</label>
