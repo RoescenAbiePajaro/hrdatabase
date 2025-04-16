@@ -144,7 +144,7 @@
         name="age"
         type="number"
         min="18"
-        max="35"
+        max="100"
         required
         value={editEmployee?.age || ''}
         class="w-full px-3 py-2 border rounded [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
