@@ -66,52 +66,52 @@
   $: totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 </script>
 
-<div class="overflow-x-auto bg-gray-800 rounded-2xl shadow-xl p-6">
-  <input type="text" placeholder="Search..." bind:value={searchQuery} class="mb-4 p-2 border border-gray-600 rounded bg-gray-700 text-white" />
+<div class="overflow-x-auto">
+  <input type="text" placeholder="Search employees..." bind:value={searchQuery} class="mb-4 p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
   {#if loading && employees.length === 0}
-    <p class="text-center py-4 text-white">Loading employees...</p>
+    <p class="text-center py-4">Loading employees...</p>
   {:else}
-    <table class="min-w-full">
+    <table class="min-w-full bg-gray-800">
       <thead>
-        <tr class="border-b border-gray-600">
-          <th class="px-4 py-2 text-left text-gray-300">FirstName</th>
-          <th class="px-4 py-2 text-left text-gray-300">Middle Name</th>
-          <th class="px-4 py-2 text-left text-gray-300">Last Name</th>
-          <th class="px-4 py-2 text-left text-gray-300">Email</th>
-          <th class="px-4 py-2 text-left text-gray-300">Age</th>
-          <th class="px-4 py-2 text-left text-gray-300">Gender</th>
-          <th class="px-4 py-2 text-left text-gray-300">Contact Number</th>
-          <th class="px-4 py-2 text-left text-gray-300">Address</th>
-          <th class="px-4 py-2 text-left text-gray-300">Job</th>
-          <th class="px-4 py-2 text-left text-gray-300">Department</th>
-          <th class="px-4 py-2 text-left text-gray-300">Status</th>
-          <th class="px-4 py-2 text-left text-gray-300">Actions</th>
+        <tr class="border-b border-gray-700">
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">First Name</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Middle Name</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Last Name</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Email</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Age</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Gender</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Contact Number</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Address</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Job</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Department</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Status</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
       <tbody>
         {#each paginatedEmployees as employeess}
-          <tr class="border-b border-gray-600 hover:bg-gray-700">
-            <td class="px-4 py-2 text-white">{employeess.firstname|| '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.middlename || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.lastname || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.email || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.age || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.gender || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.contactnumber || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.address || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.job || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.department || '-'}</td>
-            <td class="px-4 py-2 text-white">{employeess.status}</td>
-            <td class="px-4 py-2 flex gap-2">
+          <tr class="border-b border-gray-700 hover:bg-gray-700">
+            <td class="px-4 py-3 text-gray-300">{employeess.firstname|| '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.middlename || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.lastname || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.email || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.age || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.gender || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.contactnumber || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.address || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.job || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.department || '-'}</td>
+            <td class="px-4 py-3 text-gray-300">{employeess.status}</td>
+            <td class="px-4 py-3">
               <button
                 on:click={() => setEditEmployee(employeess)}
-                class="text-blue-400 hover:text-blue-300"
+                class="px-3 py-1.5 text-sm rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200"
               >
                 Edit
               </button>
               <button
                 on:click={() => deleteEmployee(employeess.id)}
-                class="text-red-400 hover:text-red-300"
+                class="px-3 py-1.5 text-sm rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors duration-200 ml-2"
               >
                 Delete
               </button>
@@ -120,12 +120,12 @@
         {/each}
       </tbody>
     </table>
-    <div class="flex justify-between mt-4">
-      <button on:click={() => currentPage = Math.max(currentPage - 1, 1)} disabled={currentPage === 1} class="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50">
+    <div class="flex justify-between items-center mt-4">
+      <button on:click={() => currentPage = Math.max(currentPage - 1, 1)} disabled={currentPage === 1} class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
         Previous
       </button>
-      <span class="text-gray-300">Page {currentPage} of {totalPages}</span>
-      <button on:click={() => currentPage = Math.min(currentPage + 1, totalPages)} disabled={currentPage === totalPages} class="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50">
+      <span class="text-gray-400">Page {currentPage} of {totalPages}</span>
+      <button on:click={() => currentPage = Math.min(currentPage + 1, totalPages)} disabled={currentPage === totalPages} class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
         Next
       </button>
     </div>

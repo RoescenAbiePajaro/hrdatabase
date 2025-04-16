@@ -119,17 +119,13 @@
     });
 
     try {
-      const endpoint = editEmployee ? `/api/employees/${editEmployee.id}` : '/api/employees';
-      const res = await fetch(endpoint, {
+      const res = await fetch('/api/employees', {
         method,
         headers: { 'Content-Type': 'application/json' },
         body
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || (method === 'POST' ? 'Creation failed' : 'Update failed'));
-      }
+      if (!res.ok) throw new Error(method === 'POST' ? 'Creation failed' : 'Update failed');
       
       await fetchEmployees();
       editEmployee = null;
@@ -158,91 +154,75 @@
 
   function setEditEmployee(employeess: Employee) {
     editEmployee = employeess;
-    activeTab = 'form';
   }
 </script>
 
-<div class="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white">
-  <div class="container mx-auto px-4 py-8">
-    <div class="flex items-center justify-between mb-8">
-      <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">AI-Powered HR Management System</h1>
-      <div class="flex items-center space-x-4">
-        <button 
-          class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-          on:click={() => activeTab = 'form'}
-        >
-          Add Employee
-        </button>
-      </div>
+<div class="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white p-6">
+  <h1 class="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600">AI-Powered HR Management System</h1>
+
+  {#if error}
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+      <p>{error}</p>
     </div>
+  {/if}
 
-    {#if error}
-      <div class="bg-red-900 border-l-4 border-red-500 p-4 mb-6 rounded-lg">
-        <p class="text-red-300">{error}</p>
-      </div>
-    {/if}
-
-    <!-- Tab Navigation -->
-    <div class="mb-8">
-      <nav class="flex space-x-4" aria-label="Tabs">
-        <button
-          class="px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200
-            {activeTab === 'management' ? 'bg-blue-600 text-white' : 'bg-gray-800 hover:bg-gray-700'}"
-          on:click={() => activeTab = 'management'}
-        >
-          Employee Management
-        </button>
-        <button
-          class="px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200
-            {activeTab === 'analysis' ? 'bg-blue-600 text-white' : 'bg-gray-800 hover:bg-gray-700'}"
-          on:click={() => activeTab = 'analysis'}
-        >
-          Analysis & Insights
-        </button>
-        <button
-          class="px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200
-            {activeTab === 'form' ? 'bg-blue-600 text-white' : 'bg-gray-800 hover:bg-gray-700'}"
-          on:click={() => activeTab = 'form'}
-        >
-          Employee Form
-        </button>
-      </nav>
-    </div>
-
-    <!-- Tab Content -->
-    {#if activeTab === 'management'}
-      <div class="bg-gray-800 rounded-2xl shadow-xl p-8">
-        <UserTable 
-          {employees} 
-          {loading} 
-          {selectedEmployeeIds} 
-          {toggleEmployeeSelection}
-          {editEmployee}
-          setEditEmployee={setEditEmployee}
-          {deleteEmployee}
-        />
-      </div>
-    {/if}
-
-    {#if activeTab === 'analysis'}
-      <div class="bg-gray-800 rounded-2xl shadow-xl p-8">
-        <AnalysisPanel
-          {loading}
-          {employees}
-          {generateSummary}
-          {customPrompt}
-          {stats}
-          {summ}
-        />
-      </div>
-    {/if}
-
-    {#if activeTab === 'form'}
-      <div class="bg-gray-800 rounded-2xl shadow-xl p-8">
-        <UserForm {editEmployee} {handleSubmit} />
-      </div>
-    {/if}
+  <!-- Tab Navigation -->
+  <div class="pb-6 mb-8">
+    <nav class="flex space-x-4" aria-label="Tabs">
+      <button
+        class="px-6 py-3 text-sm font-medium rounded-lg transition-colors duration-200 {activeTab === 'management' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}"
+        on:click={() => activeTab = 'management'}
+      >
+        Employee Management
+      </button>
+      <button
+        class="px-6 py-3 text-sm font-medium rounded-lg transition-colors duration-200 {activeTab === 'analysis' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}"
+        on:click={() => activeTab = 'analysis'}
+      >
+        Analysis & Insights
+      </button>
+      <button
+        class="px-6 py-3 text-sm font-medium rounded-lg transition-colors duration-200 {activeTab === 'form' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}"
+        on:click={() => activeTab = 'form'}
+      >
+        Employee Form
+      </button>
+    </nav>
   </div>
+
+  <!-- Tab Content -->
+  {#if activeTab === 'management'}
+    <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+      <UserTable 
+        {employees} 
+        {loading} 
+        {selectedEmployeeIds} 
+        {toggleEmployeeSelection}
+        {editEmployee}
+        setEditEmployee={setEditEmployee}
+        {deleteEmployee}
+      />
+    </div>
+  {/if}
+
+  {#if activeTab === 'analysis'}
+    <div class=" rounded-lg shadow p-6">
+      <AnalysisPanel
+        {loading}
+        {employees}
+        {generateSummary}
+        {customPrompt}
+        {stats}
+        {summ}
+      />
+    </div>
+  {/if}
+
+  {#if activeTab === 'form'}
+    <div class="rounded-lg shadow p-6">
+      <UserForm {editEmployee} {handleSubmit} />
+    </div>
+  {/if}
 </div>
 
 <style>
