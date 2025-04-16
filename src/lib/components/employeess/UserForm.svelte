@@ -171,7 +171,20 @@
     {#if editEmployee}
       <button
         type="button"
-        on:click={() => editEmployee = null}
+        on:click={() => {
+          editEmployee = null;
+          // Reset form values
+          const form = document.querySelector('form');
+          if (form) {
+            form.reset();
+          }
+          // Reset bound values
+          selectedDepartment = '';
+          selectedJob = '';
+          // Emit cancel event to parent
+          const event = new CustomEvent('cancel', { bubbles: true });
+          document.dispatchEvent(event);
+        }}
         class="px-6 py-3 text-sm font-medium rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-200"
       >
         Cancel

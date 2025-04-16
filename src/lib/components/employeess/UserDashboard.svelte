@@ -130,6 +130,19 @@
       await fetchEmployees();
       editEmployee = null;
       form.reset();
+      // Reset select fields
+      const selectElements = form.querySelectorAll('select');
+      selectElements.forEach(select => {
+        if (select.hasAttribute('bind:value')) {
+          // Reset bound values
+          const value = select.getAttribute('bind:value');
+          if (value) {
+            const variableName = value.replace('=', '');
+            // @ts-ignore
+            window[variableName] = '';
+          }
+        }
+      });
     } catch (err) {
       error = err instanceof Error ? err.message : 'Operation failed';
     }
