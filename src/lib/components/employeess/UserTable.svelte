@@ -29,6 +29,7 @@
 
   // New state for search and pagination
   let searchQuery = '';
+  let selectedDepartment: string | null = null;
   let currentPage = 1;
   const itemsPerPage = 5;
 
@@ -39,7 +40,7 @@
     }
   }
 
-  // Computed filtered users based on search query
+  // Computed filtered users based on search query and department filter
   $: filteredEmployees = employees.filter(employee => {
     const searchFields = [
       employee.firstname,
@@ -53,7 +54,10 @@
       .filter(Boolean) // Remove null/undefined values
       .map(field => (field || '').toLowerCase());
 
-    return searchFields.some(field => field.includes(searchQuery.toLowerCase()));
+    const matchesSearch = searchFields.some(field => field.includes(searchQuery.toLowerCase()));
+    const matchesDepartment = !selectedDepartment || employee.department === selectedDepartment;
+
+    return matchesSearch && matchesDepartment;
   });
 
   // Computed paginated users
@@ -67,7 +71,15 @@
 </script>
 
 <div class="overflow-x-auto">
-  <input type="text" placeholder="Search employees..." bind:value={searchQuery} class="mb-4 p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+  <div class="flex gap-4 mb-4">
+    <input type="text" placeholder="Search employees..." bind:value={searchQuery} class="flex-1 p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <select bind:value={selectedDepartment} class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="">All Departments</option>
+      {#each Array.from(new Set(employees.map(e => e.department))).filter(Boolean) as department}
+        <option value={department}>{department}</option>
+      {/each}
+    </select>
+  </div>
   {#if loading && employees.length === 0}
     <p class="text-center py-4">Loading employees...</p>
   {:else}
