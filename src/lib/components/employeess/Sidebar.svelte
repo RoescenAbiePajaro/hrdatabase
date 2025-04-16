@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
     import { goto } from '$app/navigation';
     
     const menuItems = [
@@ -36,9 +36,9 @@
     .sidebar {
         width: 250px;
         min-height: 100vh;
-        background: #2c3e50;
-        color: white;
-        padding: 20px;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        padding: 24px;
         position: fixed;
         left: 0;
         top: 0;
@@ -46,45 +46,65 @@
     }
 
     .logo {
-        padding: 20px 0;
+        padding: 24px 0;
         text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid var(--border);
     }
 
     .logo h2 {
-        margin: 0;
         font-size: 1.5rem;
+        color: var(--text-primary);
+        margin: 0;
+        font-weight: 600;
     }
 
     .menu {
-        margin-top: 20px;
+        margin-top: 32px;
     }
 
     .menu-item {
         width: 100%;
-        padding: 12px;
-        margin: 4px 0;
+        padding: 16px;
+        margin: 12px 0;
         border: none;
         background: none;
-        color: white;
-        text-align: left;
+        color: var(--text-primary);
+        font-size: 1rem;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 12px;
-        border-radius: 8px;
-        transition: background-color 0.2s;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-align: left;
     }
 
     .menu-item:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background: var(--bg-hover);
+        transform: translateX(4px);
     }
 
     .icon {
         font-size: 1.2rem;
+        margin-right: 16px;
+        width: 24px;
+        text-align: center;
     }
 
     .label {
-        font-size: 0.9rem;
+        font-weight: 500;
     }
-</style> -->
+
+    /* Dark Theme Variables */
+    :global(.dark) {
+        --bg-primary: #1a1a1a;
+        --text-primary: #ffffff;
+        --border: #404040;
+    }
+
+    /* Light Theme Variables */
+    :global(.light) {
+        --bg-primary: #ffffff;
+        --text-primary: #212529;
+        --border: #e9ecef;
+    }
+</style>

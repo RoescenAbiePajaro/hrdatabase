@@ -27,7 +27,6 @@
     averageAge: number | null;
     ageRange: { min: number; max: number } | null;
     domains: Array<{ domain: string; count: number }>;
-
   }
   
   let employees: Employee[] = [];
@@ -38,6 +37,7 @@
   let stats: Stats | null = null;
   let error = '';
   let editEmployee: Employee | null = null;
+  let activeTab = 'management';
   
   async function fetchEmployees() {
     loading = true;
@@ -166,12 +166,33 @@
     </div>
   {/if}
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- User Management Section -->
+  <!-- Tab Navigation -->
+  <div class="border-b border-gray-200 pb-4 mb-6">
+    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+      <button
+        class="border-b-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 {activeTab === 'management' ? 'border-indigo-500 text-indigo-600' : 'border-transparent'}"
+        on:click={() => activeTab = 'management'}
+      >
+        Employee Management
+      </button>
+      <button
+        class="border-b-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 {activeTab === 'analysis' ? 'border-indigo-500 text-indigo-600' : 'border-transparent'}"
+        on:click={() => activeTab = 'analysis'}
+      >
+        Analysis & Insights
+      </button>
+      <button
+        class="border-b-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 {activeTab === 'form' ? 'border-indigo-500 text-indigo-600' : 'border-transparent'}"
+        on:click={() => activeTab = 'form'}
+      >
+        Employee Form
+      </button>
+    </nav>
+  </div>
+
+  <!-- Tab Content -->
+  {#if activeTab === 'management'}
     <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-xl font-semibold mb-4 text-gray-700">HR Management System</h2>
-      
-      <UserForm {editEmployee} {handleSubmit} />
       <UserTable 
         {employees} 
         {loading} 
@@ -182,16 +203,26 @@
         {deleteEmployee}
       />
     </div>
+  {/if}
 
-    <AnalysisPanel
-      {loading}
-      {employees}
-      {generateSummary}
-      {customPrompt}
-      {stats}
-      {summ}
-    />
-  </div>
+  {#if activeTab === 'analysis'}
+    <div class="bg-white rounded-lg shadow p-6">
+      <AnalysisPanel
+        {loading}
+        {employees}
+        {generateSummary}
+        {customPrompt}
+        {stats}
+        {summ}
+      />
+    </div>
+  {/if}
+
+  {#if activeTab === 'form'}
+    <div class="bg-white rounded-lg shadow p-6">
+      <UserForm {editEmployee} {handleSubmit} />
+    </div>
+  {/if}
 </div>
 
 <style>
