@@ -3,6 +3,7 @@
   import { enhance } from '$app/forms';
   import type { SubmitFunction } from '@sveltejs/kit';
   import { departments } from '$lib/stores/departmentStore';
+  import { onMount } from 'svelte';
 
   interface Employee {
     id: number;
@@ -22,13 +23,77 @@
   export let editEmployee: Employee | null;
   export let handleSubmit: SubmitFunction;
 
-  let selectedDepartment = editEmployee?.department || '';
-  let selectedJob = editEmployee?.job || '';
+  let formState: Employee = {
+    id: editEmployee?.id || 0,
+    firstname: editEmployee?.firstname || '',
+    middlename: editEmployee?.middlename || '',
+    lastname: editEmployee?.lastname || '',
+    gender: editEmployee?.gender || '',
+    contactnumber: editEmployee?.contactnumber || '',
+    address: editEmployee?.address || '',
+    job: editEmployee?.job || '',
+    department: editEmployee?.department || '',
+    status: editEmployee?.status || 'active',
+    email: editEmployee?.email || '',
+    age: editEmployee?.age || null
+  };
+
+  let selectedDepartment = formState.department;
+  let selectedJob = formState.job;
 
   $: availableJobs = $departments.find(d => d.name === selectedDepartment)?.jobs || [];
+
+  // Reset form when editEmployee changes
+  $: if (editEmployee) {
+    formState = {
+      id: editEmployee.id,
+      firstname: editEmployee.firstname,
+      middlename: editEmployee.middlename,
+      lastname: editEmployee.lastname,
+      gender: editEmployee.gender,
+      contactnumber: editEmployee.contactnumber,
+      address: editEmployee.address,
+      job: editEmployee.job,
+      department: editEmployee.department,
+      status: editEmployee.status,
+      email: editEmployee.email,
+      age: editEmployee.age
+    };
+    selectedDepartment = formState.department;
+    selectedJob = formState.job;
+  } else {
+    formState = {
+      id: 0,
+      firstname: '',
+      middlename: '',
+      lastname: '',
+      gender: '',
+      contactnumber: '',
+      address: '',
+      job: '',
+      department: '',
+      status: 'active',
+      email: '',
+      age: null
+    };
+    selectedDepartment = '';
+    selectedJob = '';
+  }
+
+  async function handleFormSubmit(e: SubmitEvent) {
+    const formData = new FormData(e.target as HTMLFormElement);
+    await handleSubmit({
+      action: new URL(window.location.href),
+      formData,
+      formElement: e.target as HTMLFormElement,
+      controller: new AbortController(),
+      submitter: e.submitter,
+      cancel: () => {}
+    });
+  }
 </script>
 
-<form use:enhance={handleSubmit} method="POST" action="/api/employees" class="bg-gray-800 rounded-lg p-6">
+<form on:submit={handleFormSubmit} class="bg-gray-800 rounded-lg p-6">
   <div class="grid grid-cols-1 gap-6">
     <div>
       <label class="block text-gray-400 mb-2" for="firstname">First Name</label>
@@ -36,7 +101,7 @@
         id="firstname"
         name="firstname"
         type="text"
-        value={editEmployee?.firstname || ''}
+        value={formState.firstname}
         required
         class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
@@ -47,7 +112,7 @@
         id="middlename"
         name="middlename"
         type="text"
-        value={editEmployee?.middlename || ''}
+        value={formState.middlename}
         class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
@@ -57,7 +122,7 @@
         id="lastname"
         name="lastname"
         type="text"
-        value={editEmployee?.lastname || ''}
+        value={formState.lastname}
         required
         class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
@@ -70,9 +135,9 @@
         name="gender"
         class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        <option value="" disabled selected={!editEmployee?.gender}>Select Gender</option>
-        <option value="Male" selected={editEmployee?.gender === 'Male'}>Male</option>
-        <option value="Female" selected={editEmployee?.gender === 'Female'}>Female</option>
+        <option value="" disabled selected={!formState.gender}>Select Gender</option>
+        <option value="Male" selected={formState.gender === 'Male'}>Male</option>
+        <option value="Female" selected={formState.gender === 'Female'}>Female</option>
       </select>
     </div>
     <div>
@@ -81,7 +146,7 @@
         id="email"
         name="email"
         type="email"
-        value={editEmployee?.email || ''}
+        value={formState.email}
         required
         class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
@@ -93,7 +158,7 @@
         id="contactnumber"
         name="contactnumber"
         type="text"
-        value={editEmployee?.contactnumber || ''}
+        value={formState.contactnumber}
         class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
@@ -103,7 +168,7 @@
         id="address"
         name="address"
         type="text"
-        value={editEmployee?.address || ''}
+        value={formState.address}
         class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
@@ -155,7 +220,7 @@
         min="18"
         max="35"
         required
-        value={editEmployee?.age || ''}
+        value={formState.age}
         class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
     </div>
